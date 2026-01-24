@@ -49,10 +49,11 @@ var (
 	Params = URLSearchParams.New(Location.Get("search").String())
 )
 
-// Global method handlers
+// DOM method handlers
 
 func CreateElement(tag string) (js.Value) {return Document.Call("createElement", tag)}
 func CreateElementNS(ns, tag string) (js.Value) {return Document.Call("createElementNS", ns, tag)}
+func GetElementById(id string) (js.Value) {return Document.Call("getElementById", id)}
 func AppendChild(child js.Value) {Body.Call("appendChild", child)}
 func Append(child js.Value) {Body.Call("append", child)}
 func Prepend(child js.Value) {Body.Call("prepend", child)}
