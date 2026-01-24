@@ -17,6 +17,7 @@ var (
 	TextDecoder = Get("TextDecoder")
 	TextEncoder = Get("TextEncoder")
 	Uint8Array = Get("Uint8Array")
+	URL = Get("URL")
 	URLSearchParams = Get("URLSearchParams")
 
 	// DOM aliases
