@@ -23,13 +23,17 @@ call :build_wasm moduleA
 call :build_wasm moduleB
 
 :html
-copy /-y index.html Release
+if not exist Release\index.html (
+	copy index.html Release
+)
 
 :server
-echo Building server.exe...
 set GOOS=
 set GOARCH=
-go build -ldflags="-s -w" -o Release/server.exe
+if not exist Release\server.exe (
+	echo Building server.exe...
+	call go build -ldflags="-s -w" -o Release/server.exe
+)
 
 :done
 del Release\%app%.js Release\%app%.js.map
