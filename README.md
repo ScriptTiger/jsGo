@@ -19,6 +19,11 @@ https://pkg.go.dev/github.com/ScriptTiger/jsGo
 Reference implementation:  
 https://github.com/ScriptTiger/jsGo/blob/main/ref
 
+# Other projects using jsGo
+
+TigerChat:  
+https://github.com/ScriptTiger/TigerChat
+
 # More About ScriptTiger
 
 For more ScriptTiger scripts and goodies, check out ScriptTiger's GitHub Pages website:  
