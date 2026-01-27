@@ -7,8 +7,6 @@ rem set GOPHERJS_GOROOT=C:\path-to-gopherjs-goroot
 
 set app=jsGo
 
-if not exist Release md Release
-
 :ecmascript
 echo Building JS...
 set GOOS=js

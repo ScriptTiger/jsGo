@@ -11,7 +11,9 @@ var (
 
 	// Constructor aliases
 	Array = Get("Array")
+	Blob = Get("Blob")
 	Error = Get("Error")
+	FileReader = Get("FileReader")
 	Object = Get("Object")
 	String = Get("String")
 	TextDecoder = Get("TextDecoder")
@@ -29,6 +31,7 @@ var (
 	Location = Get("location")
 
 	// Method aliases
+	Alert = Get("alert").Invoke
 	Atob = Get("atob").Invoke
 	Btoa = Get("btoa").Invoke
 	ClearInterval = Get("clearInterval").Invoke
@@ -173,6 +176,24 @@ func CreateButton(str string, onclick func()) (button js.Value) {
 		event[0].Call("preventDefault")
 		onclick()
 	}))
+	return
+}
+
+// Create a span element containing both a hidden input element of type file with an onchange callback and also a button to trigger it
+func CreateLoadFileButton(text, accept string, multiple bool, onchange func(js.Value)) (span js.Value) {
+	span = CreateElement("span")
+	input := CreateElement("input")
+	input.Set("type", "file")
+	input.Set("accept", accept)
+	input.Set("multiple", multiple)
+	input.Set("style", "display: none;")
+	input.Set("onchange", ProcOf(func(event []js.Value) {
+		onchange(event[0])
+		input.Set("value", nil)
+	}))
+	span.Call("appendChild", input)
+	button := CreateButton(text, func() {input.Call("click")})
+	span.Call("appendChild", button)
 	return
 }
 
