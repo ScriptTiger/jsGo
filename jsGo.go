@@ -42,6 +42,7 @@ var (
 	ParseInt = Get("parseInt").Invoke
 	SetInterval = Get("setInterval").Invoke
 	SetTimeout = Get("setTimeout").Invoke
+	ShowSaveFilePicker = Get("showSaveFilePicker").Invoke
 
 	// Namespace object aliases
 	Crypto = Get("crypto")
@@ -181,7 +182,7 @@ func CreateButton(str string, onclick func()) (button js.Value) {
 }
 
 // Create a span element containing both a hidden input element of type file with an onchange callback and also a button to trigger it
-func CreateLoadFileButton(text, accept string, multiple bool, onchange func(js.Value)) (span js.Value) {
+func CreateLoadFileButton(text, accept string, multiple bool, onchange func(loadFiles js.Value)) (span js.Value) {
 	span = CreateElement("span")
 	input := CreateElement("input")
 	input.Set("type", "file")
@@ -189,12 +190,26 @@ func CreateLoadFileButton(text, accept string, multiple bool, onchange func(js.V
 	input.Set("multiple", multiple)
 	input.Set("style", "display: none;")
 	input.Set("onchange", ProcOf(func(event []js.Value) {
-		onchange(event[0])
+		onchange(event[0].Get("target").Get("files"))
 		input.Set("value", nil)
 	}))
 	span.Call("appendChild", input)
 	button := CreateButton(text, func() {input.Call("click")})
 	span.Call("appendChild", button)
+	return
+}
+
+// Create a button which calls showSaveFilePicker with a callback
+func CreateSaveFileButton(text string, options map[string]any, saveFileCallback func(saveFile js.Value)) (button js.Value) {
+	button = CreateButton(text, func() {
+		ThenableChain(
+			ShowSaveFilePicker(options),
+			func(saveFile js.Value) (any) {
+				saveFileCallback(saveFile)
+				return nil
+			},
+		)
+	})
 	return
 }
 
