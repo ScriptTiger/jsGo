@@ -24,6 +24,9 @@ https://github.com/ScriptTiger/jsGo/blob/main/ref
 TigerChat:  
 https://github.com/ScriptTiger/TigerChat
 
+TigerShare:  
+https://github.com/ScriptTiger/TigerShare
+
 # More About ScriptTiger
 
 For more ScriptTiger scripts and goodies, check out ScriptTiger's GitHub Pages website:  
