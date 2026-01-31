@@ -14,6 +14,7 @@ var (
 	Blob = Get("Blob")
 	Error = Get("Error")
 	FileReader = Get("FileReader")
+	Number = Get("Number")
 	Object = Get("Object")
 	String = Get("String")
 	TextDecoder = Get("TextDecoder")
