@@ -48,6 +48,7 @@ var (
 	// Namespace object aliases
 	Crypto = Get("crypto")
 	History = Get("history")
+	IndexedDB = Get("indexedDB")
 	Math = Get("Math")
 	Subtle = Crypto.Get("subtle")
 	WebAssembly = Get("WebAssembly")
