@@ -49,6 +49,7 @@ var (
 	Crypto = Get("crypto")
 	History = Get("history")
 	IndexedDB = Get("indexedDB")
+	IDBKeyRange = Get("IDBKeyRange")
 	Math = Get("Math")
 	Subtle = Crypto.Get("subtle")
 	WebAssembly = Get("WebAssembly")
