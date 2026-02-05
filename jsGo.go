@@ -9,9 +9,18 @@ var (
 	Get = Global.Get
 	Call = Global.Call
 
+	// Global property aliases
+	DevicePixelRatio = Get("devicePixelRatio")
+	InnerHeight = Get("innerHeight")
+	InnerWidth = Get("innerWidth")
+	OuterHeight = Get("outerHeight")
+	OuterWidth = Get("outerWidth")
+
 	// Constructor aliases
 	Array = Get("Array")
+	AudioContext = Get("AudioContext")
 	Blob = Get("Blob")
+	Date = Get("Date")
 	Error = Get("Error")
 	FileReader = Get("FileReader")
 	Number = Get("Number")
@@ -23,13 +32,24 @@ var (
 	URL = Get("URL")
 	URLSearchParams = Get("URLSearchParams")
 
+	// BOM namespace object aliases
+	Crypto = Get("crypto")
+	History = Get("history")
+	IndexedDB = Get("indexedDB")
+	Intl = Get("Intl")
+	IDBKeyRange = Get("IDBKeyRange")
+	Location = Get("location")
+	Math = Get("Math")
+	Navigator = Get("navigator")
+	Performance = Get("performance")
+	Screen = Get("screen")
+	Subtle = Crypto.Get("subtle")
+	WebAssembly = Get("WebAssembly")
+
 	// DOM aliases
 	Document = Get("document")
 	Head = Document.Get("head")
 	Body = Document.Get("body")
-
-	// BOM aliases
-	Location = Get("location")
 
 	// Method aliases
 	Alert = Get("alert").Invoke
@@ -39,20 +59,11 @@ var (
 	Fetch = Get("fetch").Invoke
 	GetRandomValues = Crypto.Get("getRandomValues").Invoke
 	Log = Get("console").Get("log").Invoke
-	Now = Get("Date").Get("now").Invoke
+	MatchMedia = Get("matchMedia").Invoke
 	ParseInt = Get("parseInt").Invoke
 	SetInterval = Get("setInterval").Invoke
 	SetTimeout = Get("setTimeout").Invoke
 	ShowSaveFilePicker = Get("showSaveFilePicker").Invoke
-
-	// Namespace object aliases
-	Crypto = Get("crypto")
-	History = Get("history")
-	IndexedDB = Get("indexedDB")
-	IDBKeyRange = Get("IDBKeyRange")
-	Math = Get("Math")
-	Subtle = Crypto.Get("subtle")
-	WebAssembly = Get("WebAssembly")
 
 	// Convenience variables
 	Params = URLSearchParams.New(Location.Get("search").String())
@@ -216,22 +227,57 @@ func CreateSaveFileButton(text string, options map[string]any, saveFileCallback 
 	return
 }
 
-// 32-bit variation of the FNV-1a non-cryptographic hashing algorithm
-func FNV1a32(data []byte) (hash uint32) {
-	hash = 0x811c9dc5
+// 32-bit variation of the FNV-1a non-cryptographic hashing algorithm which immediately/synchonously returns the hash as a JS ArrayBuffer
+func FNV1a32(data []byte) (js.Value) {
+	var hash uint32 = 0x811c9dc5
 	for _, char := range data {
 		hash ^= uint32(char)
 		hash *= 0x01000193
 	}
-	return
+	bytes := make([]byte, 4)
+	for i, _ := range bytes {
+		bytes[i] = byte(hash >> (24 - (i * 8)))
+	}
+	jsBytes := Uint8Array.New(4)
+	js.CopyBytesToJS(jsBytes, bytes)
+	return jsBytes.Get("buffer")
 }
 
-// 64-bit variation of the FNV-1a non-cryptographic hashing algorithm
-func FNV1a64(data []byte) (hash uint64) {
-	hash = 0xcbf29ce484222325
+// 64-bit variation of the FNV-1a non-cryptographic hashing algorithm which immediately/synchonously returns the hash as a JS ArrayBuffer
+func FNV1a64(data []byte) (js.Value) {
+	var hash uint64 = 0xcbf29ce484222325
 	for _, char := range data {
 		hash ^= uint64(char)
 		hash *= 0x100000001b3
 	}
+	bytes := make([]byte, 8)
+	for i, _ := range bytes {
+		bytes[i] = byte(hash >> (56 - (i * 8)))
+	}
+	jsBytes := Uint8Array.New(8)
+	js.CopyBytesToJS(jsBytes, bytes)
+	return jsBytes.Get("buffer")
+}
+
+// Base function for SHA-2 family functions which takes the bit length, data byte slice, and callback to asynchonrously handle the hash as a JS ArrayBuffer
+func sha2(length int, data []byte, shaCallback func(hash js.Value)) {
+	jsData := Uint8Array.New(len(data))
+	js.CopyBytesToJS(jsData, data)
+	ThenableChain(
+		Subtle.Call("digest", "SHA-"+String.Invoke(length).String(), jsData),
+		func(hash js.Value) (any) {
+			shaCallback(hash)
+			return nil
+		},
+	)
 	return
 }
+
+// 256-bit variation of SHA-2 which takes the data byte slice and callback to asynchonrously handle the hash as a JS ArrayBuffer
+func SHA256(data []byte, shaCallback func(hash js.Value)) {sha2(256, data, shaCallback)}
+
+// 384-bit variation of SHA-2 which takes the data byte slice and callback to asynchonrously handle the hash as a JS ArrayBuffer
+func SHA384(data []byte, shaCallback func(hash js.Value)) {sha2(384, data, shaCallback)}
+
+// 512-bit variation of SHA-2 which takes the data byte slice and callback to asynchonrously handle the hash as a JS ArrayBuffer
+func SHA512(data []byte, shaCallback func(hash js.Value)) {sha2(512, data, shaCallback)}
