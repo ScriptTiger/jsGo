@@ -281,3 +281,14 @@ func SHA384(data []byte, shaCallback func(hash js.Value)) {sha2(384, data, shaCa
 
 // 512-bit variation of SHA-2 which takes the data byte slice and callback to asynchonrously handle the hash as a JS ArrayBuffer
 func SHA512(data []byte, shaCallback func(hash js.Value)) {sha2(512, data, shaCallback)}
+
+// Takes a permission descriptor, such as "camera", "microphone", "geolocation", etc., and a callback to handle the returned PermissionStatus object
+func Permissions(str string, permissionsCallback func(permissionStatus js.Value)) {
+	ThenableChain(
+		Navigator.Get("permissions").Call("query", map[string]any{"name": str}),
+		func(permissionStatus js.Value) (any) {
+			permissionsCallback(permissionStatus)
+			return nil
+		},
+	)
+}
