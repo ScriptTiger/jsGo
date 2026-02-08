@@ -56,6 +56,7 @@ var (
 	Atob = Get("atob").Invoke
 	Btoa = Get("btoa").Invoke
 	ClearInterval = Get("clearInterval").Invoke
+	ClearTimeout = Get("clearTimeout").Invoke
 	Fetch = Get("fetch").Invoke
 	GetRandomValues = Crypto.Get("getRandomValues").Invoke
 	Log = Get("console").Get("log").Invoke
