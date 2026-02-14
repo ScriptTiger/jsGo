@@ -39,6 +39,7 @@ var (
 	IndexedDB = Get("indexedDB")
 	Intl = Get("Intl")
 	IDBKeyRange = Get("IDBKeyRange")
+	JSON = Get("JSON")
 	Location = Get("location")
 	Math = Get("Math")
 	Navigator = Get("navigator")
