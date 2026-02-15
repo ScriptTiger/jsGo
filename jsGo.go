@@ -22,6 +22,7 @@ var (
 	Blob = Get("Blob")
 	Date = Get("Date")
 	Error = Get("Error")
+	EventSource = Get("EventSource")
 	FileReader = Get("FileReader")
 	Number = Get("Number")
 	Object = Get("Object")
