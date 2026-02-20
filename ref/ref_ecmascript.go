@@ -16,8 +16,9 @@ func testFunc() {
 }
 
 // Catch(err js.Value) function for jsGo.LoadWASM()
-func errorFunc(err js.Value) {
+func errorFunc(err js.Value) (any) {
 	jsGo.Body.Set("innerHTML", "There was an error loading the WASM module!: "+err.Get("message").String())
+	return nil
 }
 
 func main() {

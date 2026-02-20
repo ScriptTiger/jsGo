@@ -138,7 +138,7 @@ func SetSimpleProc(str string, fn func()) (js.Func) {
 }
 
 // Function to handle the then, catch, and finally methods for a given thenable's thenable chain
-func ThenableChain(thenable js.Value, thenFunc func(arg js.Value) (any), funcs... func(arg js.Value)) (any) {
+func ThenableChain(thenable js.Value, thenFunc func(arg js.Value) (any), funcs... func(arg js.Value) (any)) (any) {
 	thenReturn := thenable.Call(
 		"then",
 		FuncOf(func(args []js.Value) (any) {return thenFunc(args[0])}),
@@ -147,14 +147,15 @@ func ThenableChain(thenable js.Value, thenFunc func(arg js.Value) (any), funcs..
 	if len(funcs) > 0 {
 		catchReturn = thenReturn.Call(
 			"catch",
-			ProcOf(func(args []js.Value) {if IsError(args[0]) {funcs[0](args[0])}}),
+			FuncOf(func(err []js.Value) (any) {return funcs[0](err[0])}),
 		)
 	} else {return thenReturn}
 	if len(funcs) > 1 {
 		finallyReturn := catchReturn.Call(
 			"finally",
-			SimpleProcOf(func() {funcs[1](js.Value{})}),
+			SimpleFuncOf(func() (any) {return funcs[1](js.Value{})}),
 		)
+		if finallyReturn.IsNull() || finallyReturn.IsUndefined() {return catchReturn}
 		return finallyReturn
 	} else {return catchReturn}
 }
@@ -170,7 +171,7 @@ func LoadJS(src string, onload func()) (classic js.Value) {
 }
 
 // Load a WASM module with a thenable chain
-func LoadWASM(str string, then func(), methods... func(err js.Value)) {
+func LoadWASM(str string, then func(), methods... func(err js.Value) (any)) {
 		goInstance := Get("Go").New()
 		ThenableChain(
 			WebAssembly.Call(
