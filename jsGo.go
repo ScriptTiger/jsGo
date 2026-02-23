@@ -26,6 +26,7 @@ var (
 	FileReader = Get("FileReader")
 	Number = Get("Number")
 	Object = Get("Object")
+	Promise = Get("Promise")
 	String = Get("String")
 	TextDecoder = Get("TextDecoder")
 	TextEncoder = Get("TextEncoder")
